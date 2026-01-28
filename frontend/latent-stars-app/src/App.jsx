@@ -5,49 +5,12 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import vertexShader from './shaders/vertex.glsl?raw'
+import fragmentShader from './shaders/fragment.glsl?raw'
 
 const uniforms = {
   progress: { value: 0.0 },
 };
-
-const vertexShader = `
-uniform float progress;
-attribute vec3 galacticPosition;
-attribute vec3 latentPosition;
-attribute vec3 instanceColor;
-attribute float instanceSize;
-varying vec3 vColor;
-
-void main() {
-    vColor = instanceColor;
-
-    vec3 finalPosition = mix(galacticPosition, latentPosition, progress);
-    vec4 mvPosition = modelViewMatrix * vec4(finalPosition, 1.0);
-    gl_Position = projectionMatrix * mvPosition;
-
-    float uniformSize = 1.0;
-    float finalSize = mix(instanceSize, uniformSize, progress);  
-    gl_PointSize = finalSize * (300.0 / -mvPosition.z);
-}
-`;
-
-const fragmentShader = `
-varying vec3 vColor;
-
-void main() { // Get the coordinate of the pixel within the point's square (ranging from 0 to 1)
-    vec2 coords = gl_PointCoord - 0.5;
-    
-    // Calculate the distance from the center
-    float dist = dot(coords, coords);
-
-    // If outside the circle, discard the pixel
-    if (dist > 0.25) {
-        discard;
-    }
-    
-    gl_FragColor = vec4(vColor, 1.0);
-}
-`;
 
 const App = () => {
   const [starData, setStarData] = useState(null);
@@ -73,13 +36,10 @@ const App = () => {
       // --- Scene Setup ---
       const currentMount = mountRef.current;
       if (!currentMount || !starData || isSetupRef.current) {
-          // This is the guard clause that handles initial renders
-          console.log('Mount or data not ready. Skipping Three.js setup.');
-          return;
+            // This is the guard clause that handles initial renders
+            console.log('Mount or data not ready. Skipping Three.js setup.');
+            return;
       }
-
-      console.log(starData.slice(0, 9));
-      console.log(starData.length);
 
       isSetupRef.current = true; // Set flag on first run for vite strict mode.
 
@@ -169,20 +129,20 @@ const App = () => {
 
       // Cleanup function
         return () => {
-          isSetupRef.current = false;
-          if (currentMount && renderer.domElement) {
+            isSetupRef.current = false;
+            if (currentMount && renderer.domElement) {
             currentMount.removeChild(renderer.domElement);
-          }
-          window.removeEventListener('resize', handleResize);
-          renderer.dispose();
-          controls.dispose();
+            }
+            window.removeEventListener('resize', handleResize);
+            renderer.dispose();
+            controls.dispose();
 
-          // Add proper scene cleanup
-          scene.traverse((object) => {
+            // Add proper scene cleanup
+            scene.traverse((object) => {
             if (object.geometry) object.geometry.dispose();
             if (object.material) object.material.dispose();
-          });
-          scene.remove(...scene.children);
+            });
+            scene.remove(...scene.children);
         };
     }, [starData]);
 
