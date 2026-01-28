@@ -1,7 +1,7 @@
 {
   "name": "latent-stars-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@tailwindcss/vite": "^4.1.13",
     "autoprefixer": "^10.4.21",
     "gsap": "^3.13.0",
+    "leva": "^0.10.1",
     "lucide-react": "^0.543.0",
     "postcss": "^8.5.6",
     "react": "^19.1.1",
